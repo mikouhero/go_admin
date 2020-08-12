@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 	"go_admin/Server/global"
 )
@@ -19,7 +20,14 @@ func init() {
 
 	// 检测变化
 	v.WatchConfig()
-
+	v.OnConfigChange(func(in fsnotify.Event) {
+		fmt.Println("config file changed", in.Name)
+		if err := v.Unmarshal(&global.GVA_CONFGI); err != nil {
+			fmt.Println(err)
+		}
+	})
+	if err := v.Unmarshal(&global.GVA_CONFGI); err != nil {
+		fmt.Println(err)
+	}
 	global.GVA_VP = v
-
 }

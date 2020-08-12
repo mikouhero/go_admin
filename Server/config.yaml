@@ -1,6 +1,6 @@
 mysql:
   username: root
-  password: 'root'
+  password: 'hmf!1008'
   path: '127.0.0.1:3306'
   db-name: 'admin'
   config: 'charset=utf8&parseTime=True&loc=Local'
