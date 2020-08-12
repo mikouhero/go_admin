@@ -11,7 +11,6 @@ func DBTables() {
 	db.AutoMigrate(
 		model.SysUser{},
 		model.SysAuthority{},
-
 	)
 
 }
