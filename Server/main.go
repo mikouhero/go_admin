@@ -2,7 +2,6 @@ package main
 
 import (
 	"go_admin/Server/core"
-	_ "go_admin/Server/core"
 	"go_admin/Server/global"
 	"go_admin/Server/initialiaze"
 )
