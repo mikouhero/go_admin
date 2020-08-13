@@ -7,7 +7,7 @@ import (
 )
 
 type server interface {
-	ListenAndServer() error
+	ListenAndServe() error
 }
 
 func RunWindowsServer() {
@@ -21,5 +21,7 @@ func RunWindowsServer() {
 
 	address := fmt.Sprintf(":%d", global.GVA_CONFIG.System.Addr)
 	fmt.Println(Router,address)
-	//s := initServer(address, Router)
+	s := initServer(address, Router)
+	s.ListenAndServe()
+	fmt.Println(s)
 }
