@@ -4,9 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"strconv"
+	"strings"
 )
 
-type Rules map[string]string
+type Rules map[string][]string
 
 type RulesMap map[string]Rules
 
@@ -82,24 +84,21 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 
 	//返回结构体的字段个数
 	num := val.NumField()
-
 	for i := 0; i < num; i++ {
 		tagVal := typ.Field(i)
 		val := val.Field(i)
-
 		if len(roleMap[tagVal.Name]) > 0 {
 			for _, v := range roleMap[tagVal.Name] {
-				fmt.Println(v)
-				//switch {
-				//case v == "notEmpty":
-				//	if isBlank(val) {
-				//		return errors.New(tagVal.Name + "值不能为空")
-				//	}
-				//case compareMap[strings.Split(v, "=")[0]]:
-				//	if !compareVerify(val, v) {
-				//		return errors.New(tagVal.Name + "长度或值不在合法范围," + v)
-				//	}
-				//}
+				switch {
+				case v == "notEmpty":
+					if isBlank(val) {
+						return errors.New(tagVal.Name + "值不能为空")
+					}
+				case compareMap[strings.Split(v, "=")[0]]:
+					if !compareVerify(val, v) {
+						return errors.New(tagVal.Name + "长度或值不在合法范围," + v)
+					}
+				}
 			}
 		}
 	}
@@ -132,7 +131,7 @@ func isBlank(value reflect.Value) bool {
 		return value.Bool()
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		return value.Int() == 0
-	case reflect.Uint, reflect.Uintptr, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+	case reflect.Uint, reflect.Uintptr, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		return value.Uint() == 0
 
 	case reflect.Float32, reflect.Float64:
@@ -145,5 +144,77 @@ func isBlank(value reflect.Value) bool {
 }
 
 func compare(value interface{}, verifyStr string) bool {
-	return false
+
+	verifyStrArr := strings.Split(verifyStr, "=")
+	val := reflect.ValueOf(value)
+	switch val.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		VInt, VErr := strconv.ParseInt(verifyStrArr[1], 10, 64)
+		if VErr != nil {
+			return false
+		}
+		switch {
+		case verifyStrArr[0] == "lt":
+			return val.Int() < VInt
+		case verifyStrArr[0] == "le":
+			return val.Int() <= VInt
+		case verifyStrArr[0] == "eq":
+			return val.Int() == VInt
+		case verifyStrArr[0] == "ne":
+			return val.Int() != VInt
+		case verifyStrArr[0] == "ge":
+			return val.Int() >= VInt
+		case verifyStrArr[0] == "gt":
+			return val.Int() > VInt
+		default:
+			return false
+		}
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		VInt, VErr := strconv.Atoi(verifyStrArr[1])
+		if VErr != nil {
+			return false
+		}
+		switch {
+		case verifyStrArr[0] == "lt":
+			return val.Uint() < uint64(VInt)
+		case verifyStrArr[0] == "le":
+			return val.Uint() <= uint64(VInt)
+		case verifyStrArr[0] == "eq":
+			return val.Uint() == uint64(VInt)
+		case verifyStrArr[0] == "ne":
+			return val.Uint() != uint64(VInt)
+		case verifyStrArr[0] == "ge":
+			return val.Uint() >= uint64(VInt)
+		case verifyStrArr[0] == "gt":
+			return val.Uint() > uint64(VInt)
+		default:
+			return false
+		}
+
+	case reflect.Float32, reflect.Float64:
+		VFloat, VErr := strconv.ParseFloat(verifyStrArr[1], 64)
+		if VErr != nil {
+			return false
+		}
+		switch {
+		case verifyStrArr[0] == "lt":
+			return val.Float() < VFloat
+		case verifyStrArr[0] == "le":
+			return val.Float() <= VFloat
+		case verifyStrArr[0] == "eq":
+			return val.Float() == VFloat
+		case verifyStrArr[0] == "ne":
+			return val.Float() != VFloat
+		case verifyStrArr[0] == "ge":
+			return val.Float() >= VFloat
+		case verifyStrArr[0] == "gt":
+			return val.Float() > VFloat
+		default:
+			return false
+		}
+	default:
+		return false
+	}
+
 }

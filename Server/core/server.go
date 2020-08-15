@@ -23,5 +23,4 @@ func RunWindowsServer() {
 	fmt.Println(Router,address)
 	s := initServer(address, Router)
 	s.ListenAndServe()
-	fmt.Println(s)
 }

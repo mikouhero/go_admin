@@ -4,10 +4,16 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go_admin/Server/model/request"
+	"go_admin/Server/utils"
 )
 
 func Register(c *gin.Context) {
 	var R request.RegisterStruct
 	c.ShouldBindJSON(&R)
-	// 数据校验
+
+	UserVerify := utils.Rules{
+		"Username": {utils.NotEmpty()},
+	}
+	UserVerifyErr := utils.Verify(R, UserVerify)
+	fmt.Println(UserVerifyErr)
 }
