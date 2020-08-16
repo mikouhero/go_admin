@@ -12,6 +12,6 @@ func InitUserRouter(Router *gin.RouterGroup) {
 		UserRouter.GET("msg", func(context *gin.Context) {
 			fmt.Println("user msg")
 		})
-		UserRouter.GET("register",v1.Register)
+		UserRouter.POST("register", v1.Register)
 	}
 }

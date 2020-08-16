@@ -42,7 +42,7 @@ func Fail(c *gin.Context) {
 }
 
 func FailWithMsg(msg string, c *gin.Context) {
-	Result(ERROR, map[string]interface{}{}, "fail", c)
+	Result(ERROR, map[string]interface{}{}, msg, c)
 }
 
 func FailWithDetail(code int, data interface{}, msg string, c *gin.Context) {
