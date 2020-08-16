@@ -5,6 +5,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go_admin/Server/global"
 	"go_admin/Server/model"
+	"go_admin/Server/utils"
 )
 
 func Register(u model.SysUser) (err error, userInter model.SysUser) {
@@ -17,7 +18,8 @@ func Register(u model.SysUser) (err error, userInter model.SysUser) {
 	} else {
 		//密码加密
 		//u.Password =""
-		//唯一标示
+		//唯一标示,
+		u.Password = utils.MD5([]byte(u.Password))
 		u.UUID, _ = uuid.NewV4()
 		err = global.GVA_DB.Create(&u).Error
 	}

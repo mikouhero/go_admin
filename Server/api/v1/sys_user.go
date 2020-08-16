@@ -34,11 +34,11 @@ func Register(c *gin.Context) {
 		HeaderImg:   R.HeaderImg,
 		AuthorityId: R.AuthorityId,
 	}
-	err, _ := service.Register(user)
+	err, userReturn := service.Register(user)
 	if err != nil {
-		response.FailWithDetail(response.ERROR, "", fmt.Sprintf("%v", err), c)
+		response.FailWithDetail(response.ERROR, response.SysUserResponse{userReturn}, fmt.Sprintf("%v", err), c)
 	} else {
-		response.Ok(c)
+		response.OkWithData(response.SysUserResponse{userReturn}, c)
 	}
 
 }
