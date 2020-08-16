@@ -31,6 +31,7 @@ func Register(c *gin.Context) {
 		Username:    R.Username,
 		Password:    R.Password,
 		NickName:    R.Nickname,
+		HeaderImg:   R.HeaderImg,
 		AuthorityId: R.AuthorityId,
 	}
 	err, _ := service.Register(user)
