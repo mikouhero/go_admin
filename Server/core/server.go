@@ -20,7 +20,6 @@ func RunWindowsServer() {
 	//Router.Static("")
 
 	address := fmt.Sprintf(":%d", global.GVA_CONFIG.System.Addr)
-	fmt.Println(Router,address)
 	s := initServer(address, Router)
 	s.ListenAndServe()
 }

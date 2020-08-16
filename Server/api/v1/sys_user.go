@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"go_admin/Server/model/request"
 	"go_admin/Server/utils"
@@ -15,5 +14,9 @@ func Register(c *gin.Context) {
 		"Username": {utils.NotEmpty()},
 	}
 	UserVerifyErr := utils.Verify(R, UserVerify)
-	fmt.Println(UserVerifyErr)
+
+	if UserVerifyErr != nil {
+
+		return
+	}
 }
