@@ -26,5 +26,25 @@ func Result(code int, data interface{}, msg string, c *gin.Context) {
 }
 
 func Ok(c *gin.Context) {
-	
+	Result(SUCCESS, map[string]interface{}{}, "ok", c)
+}
+
+func OkWithMsg(msg string, c *gin.Context) {
+	Result(SUCCESS, map[string]interface{}{}, msg, c)
+}
+
+func OkWithData(data interface{}, c *gin.Context) {
+	Result(SUCCESS, data, "ok", c)
+}
+
+func Fail(c *gin.Context) {
+	Result(ERROR, map[string]interface{}{}, "fail", c)
+}
+
+func FailWithMsg(msg string, c *gin.Context) {
+	Result(ERROR, map[string]interface{}{}, "fail", c)
+}
+
+func FailWithDetail(code int, data interface{}, msg string, c *gin.Context) {
+	Result(code, data, msg, c)
 }
