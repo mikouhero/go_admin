@@ -2,13 +2,17 @@ package v1
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"go_admin/Server/global"
 	"go_admin/Server/global/response"
+	"go_admin/Server/middleware"
 	"go_admin/Server/model"
 	"go_admin/Server/model/request"
 	response2 "go_admin/Server/model/response"
 	"go_admin/Server/service"
 	"go_admin/Server/utils"
+	"time"
 )
 
 func Register(c *gin.Context) {
@@ -71,12 +75,30 @@ func Login(c *gin.Context) {
 	if err, user := service.Login(&u); err != nil {
 		response.FailWithMsg(fmt.Sprintf("用户名或密码错误 %#v", err.Error()), c)
 	} else {
-		fmt.Println(user)
+		tokenNext(c, &user)
 	}
 
 }
 
 // 签发jwt
-func tokenNext(c *gin.Context,u model.SysUser){
+func tokenNext(c *gin.Context, user *model.SysUser) {
+	j := &middleware.JWT{[]byte(global.GVA_CONFIG.JWT.SigningKey)}
+	clams := request.CustomClaims{
+		UUID:        user.UUID,
+		ID:          user.ID,
+		NickName:    user.NickName,
+		AuthorityId: user.AuthorityId,
+		StandardClaims: jwt.StandardClaims{
+			NotBefore: time.Now().Unix() - 1000,       // 签名生效时间
+			ExpiresAt: time.Now().Unix() + 60*60*24*7, //过期时间
+			Issuer:    "amdin",                        // 签名的发行者
+		},
+	}
 
+	token, err := j.CreateToken(clams)
+
+	if err != nil {
+		response.FailWithMsg("获取token 失败"+err.Error(), c)
+	}
+	fmt.Println(token)
 }
