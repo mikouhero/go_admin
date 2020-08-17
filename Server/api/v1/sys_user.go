@@ -75,3 +75,8 @@ func Login(c *gin.Context) {
 	}
 
 }
+
+// 签发jwt
+func tokenNext(c *gin.Context,u model.SysUser){
+
+}

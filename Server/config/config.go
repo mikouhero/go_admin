@@ -4,6 +4,7 @@ type Server struct {
 	Mysql  Mysql  `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
 	Redis  Redis  `mapstructure:"redis" json:"redis" yaml:"redis"`
 	System System `mapstructure:"system" json:"system" yaml:"system"`
+	JWT    JWT    `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
 }
 
 type Mysql struct {
@@ -18,9 +19,9 @@ type Mysql struct {
 }
 
 type Redis struct {
-	Addr     string `mapstructure:"addr" json:"addr" yaml"addr"`
-	Password string `mapstructure:"password" json:"password" yaml"password"`
-	DB       int    `mapstructure:"db" json:"db" yaml"db"`
+	Addr     string `mapstructure:"addr" json:"addr" yaml:"addr"`
+	Password string `mapstructure:"password" json:"password" yaml:"password"`
+	DB       int    `mapstructure:"db" json:"db" yaml:"db"`
 }
 
 type System struct {
@@ -28,4 +29,8 @@ type System struct {
 	Env           string `mapstructure:"env" json:"env" yaml:"env"`
 	Addr          int    `mapstructure:"addr" json:"addr" yaml:"addr"`
 	DbType        string `mapstructure:"db-type" json:"dbType" yaml:"db-type"`
+}
+
+type JWT struct {
+	SigningKey string `mapstructure:"signing-key" json:"signing-key" yaml:"signing-key"`
 }
