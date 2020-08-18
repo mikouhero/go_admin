@@ -16,6 +16,10 @@ import (
 	"time"
 )
 
+func ChangePassword(c *gin.Context)  {
+	fmt.Println(c.Get("claims"))
+}
+
 func Register(c *gin.Context) {
 	var R request.RegisterStruct
 
@@ -52,7 +56,7 @@ func Register(c *gin.Context) {
 func Login(c *gin.Context) {
 
 	var L request.RegisterAndLoginStruct
-	c.ShouldBindJSON(&L)
+	_ = c.ShouldBindJSON(&L)
 
 	//fmt.Printf("%#v",L)
 	UserVerify := utils.Rules{
@@ -116,6 +120,8 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 
 	err, jwtStr := service.GetRedisJWT(user.Username)
 
+	err = nil
+
 	if err == redis.Nil {
 		if err := service.SetRedisJWT(loginJwt, user.Username); err != nil {
 			response.FailWithMsg("设置登录状态失败"+err.Error(), c)
@@ -131,6 +137,8 @@ func tokenNext(c *gin.Context, user model.SysUser) {
 	} else {
 		var blackJWT model.JwtBlacklist
 		blackJWT.Jwt = jwtStr
+		fmt.Println("--------")
+		fmt.Printf("%#v", blackJWT)
 		if err := service.JsonInBlacklist(blackJWT); err != nil {
 			response.FailWithMsg("jwt作废失败", c)
 			return
