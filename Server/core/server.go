@@ -12,6 +12,10 @@ type server interface {
 
 func RunWindowsServer() {
 
+	if global.GVA_CONFIG.System.UseMultipoint {
+		// 初始化redis服务
+		initialiaze.Redis()
+	}
 	fmt.Println("程序主进程")
 
 	Router := initialiaze.Routers()

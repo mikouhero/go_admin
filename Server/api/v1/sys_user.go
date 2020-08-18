@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis"
 	"go_admin/Server/global"
 	"go_admin/Server/global/response"
 	"go_admin/Server/middleware"
@@ -75,13 +76,13 @@ func Login(c *gin.Context) {
 	if err, user := service.Login(&u); err != nil {
 		response.FailWithMsg(fmt.Sprintf("用户名或密码错误 %#v", err.Error()), c)
 	} else {
-		tokenNext(c, &user)
+		tokenNext(c, user)
 	}
 
 }
 
 // 签发jwt
-func tokenNext(c *gin.Context, user *model.SysUser) {
+func tokenNext(c *gin.Context, user model.SysUser) {
 	j := &middleware.JWT{[]byte(global.GVA_CONFIG.JWT.SigningKey)}
 	clams := request.CustomClaims{
 		UUID:        user.UUID,
@@ -89,9 +90,9 @@ func tokenNext(c *gin.Context, user *model.SysUser) {
 		NickName:    user.NickName,
 		AuthorityId: user.AuthorityId,
 		StandardClaims: jwt.StandardClaims{
-			NotBefore: time.Now().Unix() - 1000,       // 签名生效时间
-			ExpiresAt: time.Now().Unix() + 60*60*24*7, //过期时间
-			Issuer:    "amdin",                        // 签名的发行者
+			NotBefore: time.Now().Unix() - 1000,    // 签名生效时间
+			ExpiresAt: time.Now().Unix() + 60*60*2, //过期时间
+			Issuer:    "amdin",                     // 签名的发行者
 		},
 	}
 
@@ -100,5 +101,51 @@ func tokenNext(c *gin.Context, user *model.SysUser) {
 	if err != nil {
 		response.FailWithMsg("获取token 失败"+err.Error(), c)
 	}
-	fmt.Println(token)
+
+	if !global.GVA_CONFIG.System.UseMultipoint {
+		response.OkWithData(response2.LoginResponse{
+			User:      user,
+			Token:     token,
+			ExpiresAt: clams.StandardClaims.ExpiresAt,
+		}, c)
+		return
+	}
+
+	var loginJwt model.JwtBlacklist
+	loginJwt.Jwt = token
+
+	err, jwtStr := service.GetRedisJWT(user.Username)
+
+	if err == redis.Nil {
+		if err := service.SetRedisJWT(loginJwt, user.Username); err != nil {
+			response.FailWithMsg("设置登录状态失败"+err.Error(), c)
+			return
+		}
+		response.OkWithData(response2.LoginResponse{
+			User:      user,
+			Token:     token,
+			ExpiresAt: clams.StandardClaims.ExpiresAt,
+		}, c)
+	} else if err != nil {
+		response.FailWithMsg(fmt.Sprintf("%v", err), c)
+	} else {
+		var blackJWT model.JwtBlacklist
+		blackJWT.Jwt = jwtStr
+		if err := service.JsonInBlacklist(blackJWT); err != nil {
+			response.FailWithMsg("jwt作废失败", c)
+			return
+		}
+
+		if err := service.SetRedisJWT(loginJwt, user.Username); err != nil {
+			response.FailWithMsg("设置登录状态失败", c)
+			return
+		}
+		response.OkWithData(response2.LoginResponse{
+			User:      user,
+			Token:     token,
+			ExpiresAt: clams.StandardClaims.ExpiresAt,
+		}, c)
+
+	}
+
 }
