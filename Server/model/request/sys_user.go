@@ -14,3 +14,9 @@ type RegisterAndLoginStruct struct {
 	Captcha   string `json:"captcha"`
 	CaptchaId string `json:"captcha_id"`
 }
+
+type ChangePasswordStruct struct {
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	NewPassword string `json:"newPassword"`
+}

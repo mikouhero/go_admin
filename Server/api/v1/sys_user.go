@@ -16,8 +16,29 @@ import (
 	"time"
 )
 
-func ChangePassword(c *gin.Context)  {
-	fmt.Println(c.Get("claims"))
+func ChangePassword(c *gin.Context) {
+	var params request.ChangePasswordStruct
+	_ = c.ShouldBindJSON(&params)
+	UserVerity := utils.Rules{
+		"Username":    {utils.NotEmpty()},
+		"Password":    {utils.NotEmpty()},
+		"NewPassword": {utils.NotEmpty()},
+	}
+	UserverityErr := utils.Verify(params, UserVerity)
+	if UserverityErr != nil {
+		response.FailWithMsg(UserverityErr.Error(), c)
+		return
+	}
+	user := &model.SysUser{
+		Username: params.Username,
+		Password: params.Password,
+	}
+	if err, _ := service.ChangePassword(user, params.NewPassword); err != nil {
+		response.FailWithMsg("修改失败，检查用户名或密码"+err.Error(), c)
+	} else {
+		response.OkWithMsg("修改成功", c)
+	}
+
 }
 
 func Register(c *gin.Context) {
@@ -80,7 +101,7 @@ func Login(c *gin.Context) {
 	if err, user := service.Login(&u); err != nil {
 		response.FailWithMsg(fmt.Sprintf("用户名或密码错误 %#v", err.Error()), c)
 	} else {
-		tokenNext(c, user)
+		tokenNext(c, *user)
 	}
 
 }
