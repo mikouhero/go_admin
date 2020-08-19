@@ -39,6 +39,12 @@ func ChangePassword(u *model.SysUser, newPassword string) (err error, userInter 
 	u.Password = utils.MD5([]byte(u.Password))
 
 	err = global.GVA_DB.Where("username = ? AND password = ? ", u.Username, u.Password).First(&user).Update("password", utils.MD5([]byte(newPassword))).Error
-	
+
 	return err, u
+}
+
+func UploadHeaderImg(uuid uuid.UUID,filePath string)(err error, userInter *model.SysUser)  {
+	var user model.SysUser
+	err = global.GVA_DB.Where("uuid = ?",uuid).First(&user).Update("header_img",filePath).Error
+	return  err ,&user
 }

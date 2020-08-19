@@ -5,6 +5,7 @@ type Server struct {
 	Redis  Redis  `mapstructure:"redis" json:"redis" yaml:"redis"`
 	System System `mapstructure:"system" json:"system" yaml:"system"`
 	JWT    JWT    `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Qiniu  Qiniu  `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
 }
 
 type Mysql struct {
@@ -33,4 +34,11 @@ type System struct {
 
 type JWT struct {
 	SigningKey string `mapstructure:"signing-key" json:"signing-key" yaml:"signing-key"`
+}
+
+type Qiniu struct {
+	AccessKey string `mapstructure:"access-key" json:"accessKey" yaml:"access-key"`
+	SecretKey string `mapstructure:"secret-key" json:"secretKey" yaml:"secret-key"`
+	Bucket    string `mapstructure:"bucket" json:"bucket" yaml:"bucket"`
+	ImgPath   string `mapstructure:"img-path" json:"imgPath" yaml:"img-path"`
 }

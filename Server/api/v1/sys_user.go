@@ -16,6 +16,30 @@ import (
 	"time"
 )
 
+func UploadHeaderImg(c *gin.Context) {
+	claims, _ := c.Get("claims")
+	waitUse, _ := claims.(*request.CustomClaims)
+	uuid := waitUse.UUID
+	_, header, err := c.Request.FormFile("headerImg")
+	if err != nil {
+		response.FailWithMsg("上传文件失败，"+err.Error(), c)
+	} else {
+		err, filePath, _ := utils.Upload(header)
+		if err != nil {
+			response.FailWithMsg("上传文件失败"+err.Error(), c)
+		} else {
+
+			err, inter := service.UploadHeaderImg(uuid, filePath)
+			if err != nil {
+				response.FailWithMsg("图片更新失败"+err.Error(), c)
+			} else {
+				response.OkWithData(response2.SysUserResponse{User: *inter}, c)
+			}
+		}
+
+	}
+}
+
 func ChangePassword(c *gin.Context) {
 	var params request.ChangePasswordStruct
 	_ = c.ShouldBindJSON(&params)
