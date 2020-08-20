@@ -5,6 +5,7 @@ import (
 	uuid "github.com/satori/go.uuid"
 	"go_admin/Server/global"
 	"go_admin/Server/model"
+	"go_admin/Server/model/request"
 	"go_admin/Server/utils"
 )
 
@@ -43,8 +44,20 @@ func ChangePassword(u *model.SysUser, newPassword string) (err error, userInter 
 	return err, u
 }
 
-func UploadHeaderImg(uuid uuid.UUID,filePath string)(err error, userInter *model.SysUser)  {
+func UploadHeaderImg(uuid uuid.UUID, filePath string) (err error, userInter *model.SysUser) {
 	var user model.SysUser
-	err = global.GVA_DB.Where("uuid = ?",uuid).First(&user).Update("header_img",filePath).Error
-	return  err ,&user
+	err = global.GVA_DB.Where("uuid = ?", uuid).First(&user).Update("header_img", filePath).Error
+	return err, &user
+}
+
+func GetUserInfoList(info request.PageInfo) (err error, list interface{}, totle int) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+	db := global.GVA_DB.Model(&model.SysUser{})
+	var userList []model.SysUser
+	err = db.Count(&totle).Error
+	err = db.Limit(limit).Offset(offset).Preload("Authority").Find(&userList).Error
+	
+
+	return err, userList, totle
 }

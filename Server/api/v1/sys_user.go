@@ -16,6 +16,29 @@ import (
 	"time"
 )
 
+func GetUserList(c *gin.Context) {
+	var pageInfo request.PageInfo
+	_ = c.ShouldBindJSON(&pageInfo)
+	pageVerifyErr := utils.Verify(pageInfo, utils.CustomizeMap["PageVerify"])
+	if pageVerifyErr != nil {
+		response.FailWithMsg(pageVerifyErr.Error(), c)
+		return
+	}
+
+	err, list, totle := service.GetUserInfoList(pageInfo)
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+	} else {
+		response.OkWithData(response2.PageResult{
+			List:     list,
+			Totle:    totle,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, c)
+	}
+
+}
+
 func UploadHeaderImg(c *gin.Context) {
 	claims, _ := c.Get("claims")
 	waitUse, _ := claims.(*request.CustomClaims)

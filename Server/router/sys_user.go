@@ -12,6 +12,7 @@ func InitUserRouter(Router *gin.RouterGroup) {
 		Use()
 	{
 		UserRouter.POST("changePassword", v1.ChangePassword)     // 修改密码
-		UserRouter.POST("uploadHeaderImg",v1.UploadHeaderImg)
+		UserRouter.POST("uploadHeaderImg",v1.UploadHeaderImg)    // 上传头像
+		UserRouter.POST("getUserList",v1.GetUserList)  //  分页获取用户列表
 	}
 }
