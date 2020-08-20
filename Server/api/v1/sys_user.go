@@ -16,6 +16,45 @@ import (
 	"time"
 )
 
+func SetUserAuthority(c *gin.Context) {
+	var setUsetAuth request.SetUserAuth
+	_ = c.ShouldBindJSON(&setUsetAuth)
+	UserVerify := utils.Rules{
+		"UUID":        {utils.NotEmpty()},
+		"AuthorityId": {utils.NotEmpty()},
+	}
+	err := utils.Verify(setUsetAuth, UserVerify)
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+		return
+	}
+
+	err = service.SetUserAuthority(setUsetAuth.UUID, setUsetAuth.AuthorityId)
+	if err != nil {
+		response.FailWithMsg("更新失败"+err.Error(), c)
+	} else {
+		response.OkWithMsg("ok", c)
+	}
+
+}
+
+func DeleteUser(c *gin.Context) {
+	var reqId request.GetById
+	_ = c.ShouldBindJSON(&reqId)
+	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
+
+	if IdVerifyErr != nil {
+		response.FailWithMsg(IdVerifyErr.Error(), c)
+		return
+	}
+	err := service.DeleteUser(reqId.Id)
+	if err != nil {
+		response.FailWithMsg(fmt.Sprintf("删除失败，%v", err), c)
+	} else {
+		response.FailWithMsg("删除成功", c)
+	}
+}
+
 func GetUserList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)

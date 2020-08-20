@@ -57,7 +57,15 @@ func GetUserInfoList(info request.PageInfo) (err error, list interface{}, totle 
 	var userList []model.SysUser
 	err = db.Count(&totle).Error
 	err = db.Limit(limit).Offset(offset).Preload("Authority").Find(&userList).Error
-	
-
 	return err, userList, totle
+}
+
+func SetUserAuthority(uuid uuid.UUID, authorityId string) (err error) {
+	err = global.GVA_DB.Where("uuid = ?", uuid).First(&model.SysUser{}).Update("authority_id", authorityId).Error
+	return err
+}
+
+func DeleteUser(id float64) error {
+	var user model.SysUser
+	return global.GVA_DB.Where("id = ?", id).Delete(&user).Error
 }
