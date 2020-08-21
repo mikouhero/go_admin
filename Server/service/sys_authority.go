@@ -1,37 +1,57 @@
 package service
 
-func CreateAuthority()  {
-	
+import (
+	"errors"
+	"go_admin/Server/global"
+	"go_admin/Server/model"
+)
+
+// 创建角色
+func CreateAuthority(auth model.SysAuthority) (err error, authority model.SysAuthority) {
+	var authorityBox model.SysAuthority
+	notHas := global.GVA_DB.Where("authority_id = ?", authority.AuthorityId).Find(&authorityBox).RecordNotFound()
+	if !notHas {
+		return errors.New("存在相同的角色ID"), auth
+	}
+	err = global.GVA_DB.Create(&auth).Error
+	return err, auth
 }
 
-func CopyAuthority()  {
-	
+//func CopyAuthority(copyInfo response.SysAuthorityCopyResponse) (err error, authority model.SysAuthority) {
+//	var authorityBox model.SysAuthority
+//	notHas := global.GVA_DB.Where("authority_id = ?", copyInfo.Authority.AuthorityId).Find(&authorityBox).RecordNotFound()
+//	if !notHas {
+//		return errors.New("存在相同的角色ID"), authority
+//	}
+//
+//	copyInfo.Authority.Children = []model.SysAuthority{}
+//}
+
+func UpdateAuthority(auth model.SysAuthority) (err error, authority model.SysAuthority) {
+	err = global.GVA_DB.Where("authority_id =? ", auth.AuthorityId).First(&model.SysAuthority{}).Update(&auth).Error
+	return err, authority
 }
 
-func UpdateAuthority()  {
-	
+func DeleteAuthority() {
+
 }
 
-func DeleteAuthority()  {
-	
+func GetAuthorityInfoList() {
+
 }
 
-func GetAuthorityInfoList()  {
-	
+func GetAuthorityInfo() {
+
 }
 
-func GetAuthorityInfo()  {
-	
+func SetDataAuthority() {
+
 }
 
-func SetDataAuthority()  {
-	
+func SetMenuAuthority() {
+
 }
 
-func SetMenuAuthority()  {
-	
-}
+func FindChildrenAuthority() {
 
-func FindChildrenAuthority()  {
-	
 }
