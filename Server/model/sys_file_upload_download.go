@@ -2,7 +2,7 @@ package model
 
 import "github.com/jinzhu/gorm"
 
-type ExaFileUploadDownload struct {
+type ExaFileUploadAndDownload struct {
 	gorm.Model
 	Name string `json:"name" gorm:"comment:'文件名'"`
 	Url  string `json:"url" gorm:"comment:'文件地址'"`

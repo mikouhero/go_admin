@@ -12,7 +12,6 @@ import (
 func Mysql() {
 
 	admin := global.GVA_CONFIG.Mysql
-	fmt.Println(admin)
 	if db, err := gorm.Open("mysql", admin.Username+":"+admin.Password+"@("+admin.Path+")/"+admin.Dbname+"?"+admin.Config); err != nil {
 		fmt.Println("mysql faild", err)
 		os.Exit(0)
