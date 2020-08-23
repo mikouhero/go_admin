@@ -32,8 +32,23 @@ func UpdateAuthority(auth model.SysAuthority) (err error, authority model.SysAut
 	return err, authority
 }
 
-func DeleteAuthority() {
-
+func DeleteAuthority(auth *model.SysAuthority) (err error) {
+	err = global.GVA_DB.Where("authority_id = ?", auth.AuthorityId).Find(&model.SysUser{}).Error
+	if err != nil {
+		return errors.New("角色正在使用 禁止删除")
+	}
+	err = global.GVA_DB.Where("parend_id = ?", auth.AuthorityId).Find(&model.SysAuthority{}).Error
+	if err != nil {
+		return errors.New("此角色存在子角色 不允许删除")
+	}
+	db := global.GVA_DB.Preload("SysBaseMenus").Where("authority_id =?", auth.AuthorityId).First(auth).Unscoped().Delete(auth)
+	if len(auth.SysBaseMenus) > 0 {
+		err = db.Association("SysBaseMenus").Delete(auth.SysBaseMenus).Error
+	} else {
+		err = db.Error
+	}
+	//ClearCasbin(0, auth.AuthorityId)
+	return err
 }
 
 func GetAuthorityInfoList() {
