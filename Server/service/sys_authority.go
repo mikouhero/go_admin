@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go_admin/Server/global"
 	"go_admin/Server/model"
+	"go_admin/Server/model/request"
 )
 
 // 创建角色
@@ -51,22 +52,53 @@ func DeleteAuthority(auth *model.SysAuthority) (err error) {
 	return err
 }
 
-func GetAuthorityInfoList() {
+func GetAuthorityInfoList(info request.PageInfo) (err error, list interface{}, totle int) {
+	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
+
+	db := global.GVA_DB
+	var authority []model.SysAuthority
+	err = db.Limit(limit).Offset(offset).Preload("DataAuthorityId").Where("parent_id = 0").Find(&authority).Error
+	if len(authority) > 0 {
+		for k := range authority {
+			err = FindChildrenAuthority(&authority[k])
+		}
+	}
+
+	return err, authority, totle
+}
+
+// 获取所有角色信息
+func GetAuthorityInfo(auth model.SysAuthority) (err error, sa model.SysAuthority) {
+	err = global.GVA_DB.Preload("DataAuthorityId").Where("authority_id = ?", auth.AuthorityId).First(&sa).Error
+	return err, sa
 
 }
 
-func GetAuthorityInfo() {
-
+// 设置资源角色权限
+func SetDataAuthority(auth model.SysAuthority) error {
+	var s model.SysAuthority
+	global.GVA_DB.Preload("DataAuthorityId").First(&s, "authority_id = ?", auth.AuthorityId)
+	err := global.GVA_DB.Model(&s).Association("DataAuthorityId").Replace(&auth.DataAuthorityId).Error
+	return err
 }
 
-func SetDataAuthority() {
-
+// 菜单与角色绑定
+func SetMenuAuthority(auth *model.SysAuthority) (err error) {
+	var s model.SysAuthority
+	global.GVA_DB.Preload("SysBaseMenus").First(&s, "authority_id = ?", auth.AuthorityId)
+	err = global.GVA_DB.Model(&s).Association("SysBaseMenus").Replace(&auth.SysBaseMenus).Error
+	return err
 }
 
-func SetMenuAuthority() {
+// 查询子角色
+func FindChildrenAuthority(authority *model.SysAuthority) (err error) {
+	err = global.GVA_DB.Preload("DataAuthotityId").Where("parend_id= ?", authority.AuthorityId).Find(&authority.Children).Error
 
-}
-
-func FindChildrenAuthority() {
-
+	if len(authority.Children) > 0 {
+		for k := range authority.Children {
+			err = FindChildrenAuthority(&authority.Children[k])
+		}
+	}
+	return err
 }
