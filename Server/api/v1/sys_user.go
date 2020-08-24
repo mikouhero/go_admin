@@ -41,6 +41,7 @@ func SetUserAuthority(c *gin.Context) {
 func DeleteUser(c *gin.Context) {
 	var reqId request.GetById
 	_ = c.ShouldBindJSON(&reqId)
+
 	IdVerifyErr := utils.Verify(reqId, utils.CustomizeMap["IdVerify"])
 
 	if IdVerifyErr != nil {

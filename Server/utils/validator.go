@@ -77,7 +77,6 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 
 	//kind  st 对应的类型
 	kd := val.Kind()
-
 	if kd != reflect.Struct {
 		return errors.New("需要结构体struct")
 	}
