@@ -16,6 +16,7 @@ func Mysql() {
 		fmt.Println("mysql faild", err)
 		os.Exit(0)
 	} else {
+		db.LogMode(true)
 		global.GVA_DB = db
 		global.GVA_DB.DB().SetMaxIdleConns(admin.MaxIdleConns)
 		global.GVA_DB.DB().SetMaxOpenConns(admin.MaxOpenConns)
