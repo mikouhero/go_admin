@@ -31,6 +31,7 @@ func GetMenuAuthority(c *gin.Context) {
 
 }
 
+// 添加菜单
 func AddBaseMenu(c *gin.Context) {
 	var menu model.SysBaseMenu
 	_ = c.ShouldBindJSON(&menu)
@@ -66,6 +67,7 @@ func AddBaseMenu(c *gin.Context) {
 
 }
 
+// 删除菜单
 func DeleteBaseMenu(c *gin.Context) {
 	var idInfo request.GetById
 	_ = c.ShouldBindJSON(&idInfo)
@@ -82,6 +84,7 @@ func DeleteBaseMenu(c *gin.Context) {
 	}
 }
 
+// 更新菜单
 func UpdateBaseMenu(c *gin.Context) {
 	var menu model.SysBaseMenu
 	_ = c.ShouldBindJSON(&menu)
@@ -118,6 +121,7 @@ func UpdateBaseMenu(c *gin.Context) {
 
 }
 
+// 通过ID获取菜单信息
 func GetBaseMenuById(c *gin.Context) {
 	var idInfo request.GetById
 	_ = c.ShouldBindJSON(&idInfo)
@@ -132,6 +136,6 @@ func GetBaseMenuById(c *gin.Context) {
 		response.FailWithMsg(err.Error(), c)
 		return
 	} else {
-		response.OkWithData(response2.SysBaseMenuResponse{Menu:menu},c)
+		response.OkWithData(response2.SysBaseMenuResponse{Menu: menu}, c)
 	}
 }

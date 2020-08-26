@@ -38,8 +38,9 @@ func DeleteAuthority(auth *model.SysAuthority) (err error) {
 	if err != nil {
 		return errors.New("角色正在使用 禁止删除")
 	}
-	err = global.GVA_DB.Where("parend_id = ?", auth.AuthorityId).Find(&model.SysAuthority{}).Error
-	if err != nil {
+	err = global.GVA_DB.Where("parent_id = ?", auth.AuthorityId).Find(&model.SysAuthority{}).Error
+
+	if err == nil {
 		return errors.New("此角色存在子角色 不允许删除")
 	}
 	db := global.GVA_DB.Preload("SysBaseMenus").Where("authority_id =?", auth.AuthorityId).First(auth).Unscoped().Delete(auth)
