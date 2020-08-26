@@ -6,6 +6,7 @@ import (
 	"go_admin/Server/global/response"
 	"go_admin/Server/model"
 	"go_admin/Server/model/request"
+	response2 "go_admin/Server/model/response"
 	"go_admin/Server/service"
 	"go_admin/Server/utils"
 )
@@ -118,5 +119,19 @@ func UpdateBaseMenu(c *gin.Context) {
 }
 
 func GetBaseMenuById(c *gin.Context) {
+	var idInfo request.GetById
+	_ = c.ShouldBindJSON(&idInfo)
+	IdVerityErr := utils.Verify(idInfo, utils.CustomizeMap["IdVerity"])
+	if IdVerityErr != nil {
+		response.FailWithMsg(IdVerityErr.Error(), c)
+		return
+	}
 
+	err, menu := service.GetBaseMenuById(idInfo.Id)
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+		return
+	} else {
+		response.OkWithData(response2.SysBaseMenuResponse{Menu:menu},c)
+	}
 }

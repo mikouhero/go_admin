@@ -42,17 +42,17 @@ func UpdateBaseMenu(menu model.SysBaseMenu) (err error) {
 
 	db := global.GVA_DB.Where("id = ?", menu.ID).Find(&oldMenu)
 
-	//if oldMenu.Name != menu.Name {
-	//	notFound := global.GVA_DB.Where("id <> ? and name = ?", menu.ID, menu.Name).First(&model.SysBaseMenu{}).RecordNotFound()
-	//	if !notFound {
-	//		return errors.New("存在相同的name")
-	//	}
-	//}
-	//fmt.Printf("%#v",db)
+	if oldMenu.Name != menu.Name {
+		notFound := global.GVA_DB.Where("id <> ? and name = ?", menu.ID, menu.Name).First(&model.SysBaseMenu{}).RecordNotFound()
+		if !notFound {
+			return errors.New("存在相同的name")
+		}
+	}
 	err = db.Updates(updateMap).Error
 	return err
 }
 
-func GetBaseMenuById() {
-
+func GetBaseMenuById(id float64) (err error, menu model.SysBaseMenu) {
+	err = global.GVA_DB.Where("id = ?", id).First(&menu).Error
+	return
 }
