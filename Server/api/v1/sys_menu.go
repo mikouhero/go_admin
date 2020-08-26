@@ -18,6 +18,18 @@ func GetMenuList(c *gin.Context) {
 
 }
 
+func GetBaseMenuTree(c *gin.Context) {
+
+}
+
+func AddMenuAuthority(c *gin.Context) {
+
+}
+
+func GetMenuAuthority(c *gin.Context) {
+
+}
+
 func AddBaseMenu(c *gin.Context) {
 	var menu model.SysBaseMenu
 	_ = c.ShouldBindJSON(&menu)
@@ -53,18 +65,6 @@ func AddBaseMenu(c *gin.Context) {
 
 }
 
-func GetBaseMenuTree(c *gin.Context) {
-
-}
-
-func AddMenuAuthority(c *gin.Context) {
-
-}
-
-func GetMenuAuthority(c *gin.Context) {
-
-}
-
 func DeleteBaseMenu(c *gin.Context) {
 	var idInfo request.GetById
 	_ = c.ShouldBindJSON(&idInfo)
@@ -77,11 +77,43 @@ func DeleteBaseMenu(c *gin.Context) {
 	if err != nil {
 		response.FailWithMsg(fmt.Sprintf("删除失败 %v", err), c)
 	} else {
-		response.OkWithMsg("success",c)
+		response.OkWithMsg("success", c)
 	}
 }
 
 func UpdateBaseMenu(c *gin.Context) {
+	var menu model.SysBaseMenu
+	_ = c.ShouldBindJSON(&menu)
+
+	rules := utils.Rules{
+		"Path":      {utils.NotEmpty()},
+		"ID":        {utils.NotEmpty()},
+		"Name":      {utils.NotEmpty()},
+		"Component": {utils.NotEmpty()},
+		"Sort":      {utils.Ge("0"), "ge=0"},
+	}
+	fmt.Println(menu)
+	verifyErr := utils.Verify(menu, rules)
+	if verifyErr != nil {
+		response.FailWithMsg(verifyErr.Error(), c)
+		return
+	}
+
+	metaRule := utils.Rules{
+		"Title": {utils.NotEmpty()},
+	}
+	verifyErr = utils.Verify(menu.Meta, metaRule)
+	if verifyErr != nil {
+		response.FailWithMsg(verifyErr.Error(), c)
+		return
+	}
+
+	err := service.UpdateBaseMenu(menu)
+	if err != nil {
+		response.FailWithMsg(verifyErr.Error(), c)
+	} else {
+		response.OkWithMsg("success", c)
+	}
 
 }
 

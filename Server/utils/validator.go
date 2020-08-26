@@ -89,7 +89,7 @@ func Verify(st interface{}, roleMap Rules) (err error) {
 		if len(roleMap[tagVal.Name]) > 0 {
 			for _, v := range roleMap[tagVal.Name] {
 				switch {
-				case v == "notEmpty":
+				case v == "not Empty":
 					if isBlank(val) {
 						return errors.New(tagVal.Name + "值不能为空")
 					}
