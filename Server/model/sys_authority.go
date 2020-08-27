@@ -14,4 +14,3 @@ type SysAuthority struct {
 	SysBaseMenus    []SysBaseMenu  `json:"menus" gorm:"many2many:sys_authority_menus;"`
 }
 
-

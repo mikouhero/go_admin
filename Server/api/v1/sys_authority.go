@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go_admin/Server/global/response"
 	"go_admin/Server/model"
+	"go_admin/Server/model/request"
 	response2 "go_admin/Server/model/response"
 	"go_admin/Server/service"
 	"go_admin/Server/utils"
@@ -83,8 +84,28 @@ func CopyAuthority(c *gin.Context) {
 
 }
 
+// 分页获取角色列表
 func GetAuthorityList(c *gin.Context) {
+	var pageInfo request.PageInfo
+	_ = c.ShouldBindJSON(&pageInfo)
+	err := utils.Verify(pageInfo, utils.CustomizeMap["PageVerify"])
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+		return
+	}
+	err, list, totle := service.GetAuthorityInfoList(pageInfo)
 
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+	} else {
+
+		response.OkWithData(response2.PageResult{
+			List:     list,
+			Totle:    totle,
+			Page:     pageInfo.Page,
+			PageSize: pageInfo.PageSize,
+		}, c)
+	}
 }
 
 // 设置资源权限

@@ -119,7 +119,11 @@ func SetMenuAuthority(auth *model.SysAuthority) (err error) {
 
 // 查询子角色
 func FindChildrenAuthority(authority *model.SysAuthority) (err error) {
-	err = global.GVA_DB.Preload("DataAuthotityId").Where("parend_id= ?", authority.AuthorityId).Find(&authority.Children).Error
+	err = global.GVA_DB.
+		Preload("DataAuthorityId").
+		Where("parent_id= ?", authority.AuthorityId).
+		Find(&authority.Children).
+		Error
 
 	if len(authority.Children) > 0 {
 		for k := range authority.Children {
