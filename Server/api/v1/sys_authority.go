@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go_admin/Server/global/response"
 	"go_admin/Server/model"
@@ -55,7 +56,27 @@ func DeleteAuthority(c *gin.Context) {
 
 // 更新角色
 func UpdateAuthority(c *gin.Context) {
+	var auth model.SysAuthority
+	_ = c.ShouldBindJSON(&auth)
+	rules := utils.Rules{
+		"AuthorityId":   {utils.NotEmpty()},
+		"AuthorityName": {utils.NotEmpty()},
+		"ParentId":      {utils.NotEmpty()},
+	}
+	err := utils.Verify(auth, rules)
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+		return
+	}
 
+	err, authority := service.UpdateAuthority(auth)
+
+	if err != nil {
+		response.FailWithMsg(fmt.Sprintf("更新失败 ,%v", err), c)
+		return
+	} else {
+		response.OkWithData(response2.SysAuthorityResponse{Authority: authority}, c)
+	}
 }
 
 func CopyAuthority(c *gin.Context) {

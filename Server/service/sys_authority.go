@@ -10,7 +10,10 @@ import (
 // 创建角色
 func CreateAuthority(auth model.SysAuthority) (err error, authority model.SysAuthority) {
 	var authorityBox model.SysAuthority
-	notHas := global.GVA_DB.Where("authority_id = ?", authority.AuthorityId).Find(&authorityBox).RecordNotFound()
+	notHas := global.GVA_DB.
+		Where("authority_id = ?", authority.AuthorityId).
+		Find(&authorityBox).
+		RecordNotFound()
 	if !notHas {
 		return errors.New("存在相同的角色ID"), auth
 	}
@@ -34,18 +37,34 @@ func UpdateAuthority(auth model.SysAuthority) (err error, authority model.SysAut
 }
 
 func DeleteAuthority(auth *model.SysAuthority) (err error) {
-	err = global.GVA_DB.Where("authority_id = ?", auth.AuthorityId).Find(&model.SysUser{}).Error
+	err = global.GVA_DB.
+		Where("authority_id = ?", auth.AuthorityId).
+		Find(&model.SysUser{}).
+		Error
 	if err != nil {
 		return errors.New("角色正在使用 禁止删除")
 	}
-	err = global.GVA_DB.Where("parent_id = ?", auth.AuthorityId).Find(&model.SysAuthority{}).Error
+
+	err = global.GVA_DB.
+		Where("parent_id = ?", auth.AuthorityId).
+		Find(&model.SysAuthority{}).
+		Error
 
 	if err == nil {
 		return errors.New("此角色存在子角色 不允许删除")
 	}
-	db := global.GVA_DB.Preload("SysBaseMenus").Where("authority_id =?", auth.AuthorityId).First(auth).Unscoped().Delete(auth)
+
+	db := global.GVA_DB.
+		Preload("SysBaseMenus").
+		Where("authority_id =?", auth.AuthorityId).
+		First(auth).
+		Unscoped().
+		Delete(auth)
 	if len(auth.SysBaseMenus) > 0 {
-		err = db.Association("SysBaseMenus").Delete(auth.SysBaseMenus).Error
+		err = db.
+			Association("SysBaseMenus").
+			Delete(auth.SysBaseMenus).
+			Error
 	} else {
 		err = db.Error
 	}
@@ -59,7 +78,13 @@ func GetAuthorityInfoList(info request.PageInfo) (err error, list interface{}, t
 
 	db := global.GVA_DB
 	var authority []model.SysAuthority
-	err = db.Limit(limit).Offset(offset).Preload("DataAuthorityId").Where("parent_id = 0").Find(&authority).Error
+	err = db.
+		Limit(limit).
+		Offset(offset).
+		Preload("DataAuthorityId").
+		Where("parent_id = 0").
+		Find(&authority).
+		Error
 	if len(authority) > 0 {
 		for k := range authority {
 			err = FindChildrenAuthority(&authority[k])
