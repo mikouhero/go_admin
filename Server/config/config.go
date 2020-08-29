@@ -1,11 +1,12 @@
 package config
 
 type Server struct {
-	Mysql  Mysql  `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
-	Redis  Redis  `mapstructure:"redis" json:"redis" yaml:"redis"`
-	System System `mapstructure:"system" json:"system" yaml:"system"`
-	JWT    JWT    `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
-	Qiniu  Qiniu  `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
+	Mysql   Mysql   `mapstructure:"mysql" json:"mysql" yaml:"mysql"`
+	Redis   Redis   `mapstructure:"redis" json:"redis" yaml:"redis"`
+	System  System  `mapstructure:"system" json:"system" yaml:"system"`
+	JWT     JWT     `mapstructure:"jwt" json:"jwt" yaml:"jwt"`
+	Qiniu   Qiniu   `mapstructure:"qiniu" json:"qiniu" yaml:"qiniu"`
+	Captcha Captcha `mapstructure:"captcha" json:"captcha" yaml:"captcha"`
 }
 
 type Mysql struct {
@@ -41,4 +42,10 @@ type Qiniu struct {
 	SecretKey string `mapstructure:"secret-key" json:"secretKey" yaml:"secret-key"`
 	Bucket    string `mapstructure:"bucket" json:"bucket" yaml:"bucket"`
 	ImgPath   string `mapstructure:"img-path" json:"imgPath" yaml:"img-path"`
+}
+
+type Captcha struct {
+	KeyLong   int `mapstructure:"key-long" json:"keyLong"  yaml:"key-long"`
+	ImgWidth  int `mapstructure:"img-width" json:"imgWidth" yaml:"img-width"`
+	ImgHeight int `mapstructure:"img-height" json:"imgHeight" yaml:"img-height"`
 }

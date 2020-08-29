@@ -22,3 +22,8 @@ qiniu:
   secret-key: 'pgdbqEsf7ooZh7W3xokP833h3dZ_VecFXPDeG5JY'
   bucket: 'qm-plus-img'
   img-path: 'http://qmplusimg.henrongyi.top'
+
+captcha:
+  key-long: 6
+  key-width: 240
+  key-height: 80
