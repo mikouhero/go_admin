@@ -166,21 +166,20 @@ func Login(c *gin.Context) {
 	var L request.RegisterAndLoginStruct
 	_ = c.ShouldBindJSON(&L)
 
-	//fmt.Printf("%#v",L)
 	UserVerify := utils.Rules{
 		"CaptchaId": {utils.NotEmpty()},
 		"Captcha":   {utils.NotEmpty()},
-		"Username": {utils.NotEmpty()},
-		"Password": {utils.NotEmpty()},
+		"Username":  {utils.NotEmpty()},
+		"Password":  {utils.NotEmpty()},
 	}
 	UserVerifyErr := utils.Verify(L, UserVerify)
-	fmt.Println(UserVerifyErr)
 	if UserVerifyErr != nil {
 		response.FailWithMsg(UserVerifyErr.Error(), c)
 		return
 	}
 
 	// 验证码
+	//if store.Verify(L.CaptchaId, L.Captcha, true) {
 	u := model.SysUser{
 		Username: L.Username,
 		Password: L.Password,
@@ -190,6 +189,9 @@ func Login(c *gin.Context) {
 	} else {
 		tokenNext(c, *user)
 	}
+	//} else {
+	//	response.FailWithMsg("验证码错误", c)
+	//}
 
 }
 

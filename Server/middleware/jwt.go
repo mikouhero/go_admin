@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"go_admin/Server/global"
@@ -74,8 +73,6 @@ func NewJWT() *JWT {
 // 创建token
 func (j *JWT) CreateToken(claims request.CustomClaims) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	fmt.Println(token)
-	fmt.Println(j.SigningKey)
 	return token.SignedString(j.SigningKey)
 }
 

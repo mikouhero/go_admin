@@ -12,6 +12,9 @@ import (
 )
 
 func GetMenu(c *gin.Context) {
+	claims ,_:= c.Get("claims")
+	customClaims := claims.(*request.CustomClaims)
+	fmt.Println(customClaims)
 
 }
 
