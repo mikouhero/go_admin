@@ -25,5 +25,5 @@ qiniu:
 
 captcha:
   key-long: 6
-  key-width: 240
-  key-height: 80
+  img-width: 240
+  img-height: 80

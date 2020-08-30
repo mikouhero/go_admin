@@ -168,8 +168,8 @@ func Login(c *gin.Context) {
 
 	//fmt.Printf("%#v",L)
 	UserVerify := utils.Rules{
-		//"CaptchaId": {utils.NotEmpty()},
-		//"Captcha":   {utils.NotEmpty()},
+		"CaptchaId": {utils.NotEmpty()},
+		"Captcha":   {utils.NotEmpty()},
 		"Username": {utils.NotEmpty()},
 		"Password": {utils.NotEmpty()},
 	}

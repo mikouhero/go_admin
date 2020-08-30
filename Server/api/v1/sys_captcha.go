@@ -12,17 +12,15 @@ import (
 var store = base64Captcha.DefaultMemStore
 
 func Captcha(c *gin.Context) {
-	driver := base64Captcha.NewDriverDigit(global.GVA_CONFIG.Captcha.ImgHeight, global.GVA_CONFIG.Captcha.ImgWidth, global.GVA_CONFIG.Captcha.KeyLong, 0.7, 0.8)
-
+	driver := base64Captcha.NewDriverDigit(global.GVA_CONFIG.Captcha.ImgHeight, global.GVA_CONFIG.Captcha.ImgWidth, global.GVA_CONFIG.Captcha.KeyLong, 0.7, 80)
 	cp := base64Captcha.NewCaptcha(driver, store)
-	generate, s, err := cp.Generate()
-
+	id, b64s, err := cp.Generate()
 	if err != nil {
 		response.FailWithMsg(fmt.Sprintf("获取数据失败 ，%v", err), c)
 	} else {
 		response.OkWithData(response2.SysCaptchaResponse{
-			CaptchaId: generate,
-			PicPath:   s,
+			CaptchaId: id,
+			PicPath:   b64s,
 		}, c)
 	}
 
