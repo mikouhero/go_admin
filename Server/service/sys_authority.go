@@ -37,11 +37,14 @@ func UpdateAuthority(auth model.SysAuthority) (err error, authority model.SysAut
 }
 
 func DeleteAuthority(auth *model.SysAuthority) (err error) {
-	err = global.GVA_DB.
+
+	var num int
+	global.GVA_DB.
 		Where("authority_id = ?", auth.AuthorityId).
 		Find(&model.SysUser{}).
-		Error
-	if err != nil {
+		Count(&num)
+
+	if num > 0 {
 		return errors.New("角色正在使用 禁止删除")
 	}
 

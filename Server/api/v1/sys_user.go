@@ -16,6 +16,7 @@ import (
 	"time"
 )
 
+// 设置用户权限 分配角色
 func SetUserAuthority(c *gin.Context) {
 	var setUsetAuth request.SetUserAuth
 	_ = c.ShouldBindJSON(&setUsetAuth)
@@ -38,6 +39,7 @@ func SetUserAuthority(c *gin.Context) {
 
 }
 
+// 删除用户
 func DeleteUser(c *gin.Context) {
 	var reqId request.GetById
 	_ = c.ShouldBindJSON(&reqId)
@@ -56,6 +58,7 @@ func DeleteUser(c *gin.Context) {
 	}
 }
 
+// 获取用户列表
 func GetUserList(c *gin.Context) {
 	var pageInfo request.PageInfo
 	_ = c.ShouldBindJSON(&pageInfo)
@@ -79,6 +82,7 @@ func GetUserList(c *gin.Context) {
 
 }
 
+// 上传头像
 func UploadHeaderImg(c *gin.Context) {
 	claims, _ := c.Get("claims")
 	waitUse, _ := claims.(*request.CustomClaims)
@@ -103,6 +107,7 @@ func UploadHeaderImg(c *gin.Context) {
 	}
 }
 
+//修改密码
 func ChangePassword(c *gin.Context) {
 	var params request.ChangePasswordStruct
 	_ = c.ShouldBindJSON(&params)
@@ -128,6 +133,7 @@ func ChangePassword(c *gin.Context) {
 
 }
 
+// 用户注册
 func Register(c *gin.Context) {
 	var R request.RegisterStruct
 
@@ -161,9 +167,11 @@ func Register(c *gin.Context) {
 
 }
 
+// 用户登录
 func Login(c *gin.Context) {
 
 	var L request.RegisterAndLoginStruct
+
 	_ = c.ShouldBindJSON(&L)
 
 	UserVerify := utils.Rules{
@@ -178,7 +186,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// 验证码
+	// 忽略验证码
 	//if store.Verify(L.CaptchaId, L.Captcha, true) {
 	u := model.SysUser{
 		Username: L.Username,
