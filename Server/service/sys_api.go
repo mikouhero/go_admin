@@ -59,7 +59,7 @@ func GetAllApis() (err error, apis []model.SysApi) {
 	return
 }
 
-func GetApiInfoList(api model.SysApi, info request.PageInfo, order string, desc bool) (err error, list interface{}, total int64) {
+func GetApiInfoList(api model.SysApi, info request.PageInfo, order string, desc bool) (err error, list interface{}, total int) {
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
 	db := global.GVA_DB.Model(&model.SysApi{})
