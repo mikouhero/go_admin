@@ -80,11 +80,43 @@ func GetApiList(c *gin.Context) {
 
 }
 func GetApiById(c *gin.Context) {
-
+	var idInfo request.GetById
+	_ = c.ShouldBindJSON(&idInfo)
+	err := utils.Verify(idInfo, utils.CustomizeMap["IdVerify"])
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+	}
+	err, api := service.GetApiById(idInfo.Id)
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+	} else {
+		response.OkWithData(response2.SysAPIResponse{Api: api}, c)
+	}
 }
 
 func UpdateApi(c *gin.Context) {
+	var api model.SysApi
+	_ = c.ShouldBindJSON(&api)
 
+	ApiVerity := utils.Rules{
+		"ID":          {utils.NotEmpty()},
+		"Path":        {utils.NotEmpty()},
+		"Description": {utils.NotEmpty()},
+		"ApiGroup":    {utils.NotEmpty()},
+		"Method":      {utils.NotEmpty()},
+	}
+
+	err := utils.Verify(api, ApiVerity)
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+		return
+	}
+	err = service.UpdateApi(api)
+	if err != nil {
+		response.FailWithMsg(err.Error(), c)
+	} else {
+		response.Ok(c)
+	}
 }
 
 func GetAllApis(c *gin.Context) {
