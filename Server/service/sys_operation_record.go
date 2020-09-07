@@ -22,7 +22,7 @@ func GetSysOperationRecord(id uint) (err error, record model.SysOperationRecord)
 	err = global.GVA_DB.Where("id = ?", id).First(&record).Error
 	return
 }
-func GetSysOperationRecordInfoList(info request.SysOperationRecordSearch) (err error, list interface{}, total int64) {
+func GetSysOperationRecordInfoList(info request.SysOperationRecordSearch) (err error, list interface{}, total int) {
 
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
