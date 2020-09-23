@@ -57,7 +57,9 @@ func FindSysOperationRecord(c *gin.Context) {
 
 func GetSysOperationRecordList(c *gin.Context) {
 	var pageInfo request.SysOperationRecordSearch
+
 	_ = c.ShouldBindJSON(&pageInfo)
+
 	err, list, total := service.GetSysOperationRecordInfoList(pageInfo)
 	if err != nil {
 		response.FailWithMsg(fmt.Sprintf("获取数据失败，%v", err), c)
