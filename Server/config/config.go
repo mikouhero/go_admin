@@ -36,6 +36,9 @@ type System struct {
 type JWT struct {
 	SigningKey string `mapstructure:"signing-key" json:"signing-key" yaml:"signing-key"`
 }
+type Casbin struct {
+	ModelPath string `mapstructure:"model-path" json:"modelPath" yaml:"model-path"`
+}
 
 type Qiniu struct {
 	AccessKey string `mapstructure:"access-key" json:"accessKey" yaml:"access-key"`
